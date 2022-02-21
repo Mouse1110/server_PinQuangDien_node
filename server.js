@@ -41,7 +41,18 @@ app.get('/data',function(req,res){
       res.json({err:1,data:null});
       return;
     }
-    res.json({err:0,data:data});
+    var resData = {
+      _id : data._id,
+      nd:parseFloat(data.nd).toFixed(2),
+      bxmt:parseFloat(data.bxmt).toFixed(2),
+      cdddd:parseFloat(data.cdddd).toFixed(2),
+      cdddtt:parseFloat(data.cdddtt).toFixed(2),
+      cstt:parseFloat(data.cstt).toFixed(2),
+      csd:parseFloat(data.csd).toFixed(2),
+      cb:data.nd<10?0:1,
+      dahd:parseFloat(data.dahd).toFixed(2),
+    }
+    res.json({err:0,data:resData});
   });
     
 });
