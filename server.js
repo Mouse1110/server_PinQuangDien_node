@@ -5,6 +5,25 @@ var bodyParser = require("body-parser");
 // config database
 const dataController = require("./controller/data.controller");
 
+// mailer
+const nodemailer = require("nodemailer");
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'canhbaoloisolar@gmail.com',
+    pass: 'Canhbao123'
+  }
+});
+
+var mailOptions = {
+  from: 'canhbaoloisolar@gmail.com',
+  to: 'canhbaoloisolar@gmail.com',
+  subject: 'Cảnh báo',
+  text: 'Hệ thống đang bị mất năng lượng. Xin hãy kiểm tra lại cáp kết nối, bề mặt pin quang điện.'
+};
+
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -27,27 +46,67 @@ app.get('/data',function(req,res){
     
 });
 
+var dataFirst = '';
+
 app.post('/data',function(req,res){
   if (!req.body){
     res.json({err:2});
     return;
   }
-  var data = {nd:req.body.nd,
+  var data = {
+    nd:req.body.nd,
     bxmt:req.body.bxmt,
     cdddd:req.body.cdddd,
     cdddtt:req.body.cdddtt,
     cstt:req.body.cstt,
     csd:req.body.csd,
     cb:req.body.cb,
-    dahd:req.body.dahd,};
-  dataController.insert(data).then(function(log){
-    console.log(log);
-    if(!log){
-      res.json({err:1});
-      return;
+    dahd:req.body.dahd,
+  };
+  if (dataFirst=== ''){
+    dataFirst = data;
+    if (dataFirst.cb>=10){
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+          dataController.insert(data).then(function(log){
+            
+            if(!log){
+              res.json({err:1});
+              return;
+            }
+            res.json({err:0});
+          });
+        }
+      });
+    } else {
+      dataController.insert(data).then(function(log){
+        
+        if(!log){
+          res.json({err:1});
+          return;
+        }
+        res.json({err:0});
+      });
     }
-    res.json({err:0});
-  });
+    
+  } else {
+    if (data.cb <10){
+      dataFirst = '';
+    } else {
+      dataFirst = data;
+    }
+    dataController.insert(data).then(function(log){
+     
+      if(!log){
+        res.json({err:1});
+        return;
+      }
+      res.json({err:0});
+    });
+  }
 });
 
 // Mongoose 
