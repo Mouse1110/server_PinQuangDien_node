@@ -13,7 +13,7 @@ var transporter = nodemailer.createTransport({
   auth: {
     user: 'canhbaoloisolar@gmail.com',
     pass: 'Canhbao123'
-  }
+  } 
 });
 
 var mailOptions = {
@@ -64,6 +64,7 @@ app.post('/data',function(req,res){
     res.json({err:2});
     return;
   }
+  console.log(dataFirst);
   var data = {
     nd:req.body.nd,
     bxmt:req.body.bxmt,
@@ -76,7 +77,8 @@ app.post('/data',function(req,res){
   };
   if (dataFirst=== ''){
     dataFirst = data;
-    if (dataFirst.cb>=10){
+    if (parseFloat(dataFirst.cb)>=10){
+      console.log("a");
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
           console.log(error);
@@ -94,7 +96,6 @@ app.post('/data',function(req,res){
       });
     } else {
       dataController.insert(data).then(function(log){
-        
         if(!log){
           res.json({err:1});
           return;
@@ -104,7 +105,7 @@ app.post('/data',function(req,res){
     }
     
   } else {
-    if (data.cb <10){
+    if (parseFloat(data.cb) <10){
       dataFirst = '';
     } else {
       dataFirst = data;
