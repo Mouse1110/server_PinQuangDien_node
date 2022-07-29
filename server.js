@@ -78,7 +78,6 @@ app.post('/data',function(req,res){
   if (dataFirst=== ''){
     dataFirst = data;
     if (parseFloat(dataFirst.cb)>=10){
-      console.log("a");
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
           console.log(error);
@@ -123,7 +122,7 @@ app.post('/data',function(req,res){
 
 // Mongoose 
 const mongoose  = require("mongoose");
-mongoose.connect('mongodb+srv://pinquangdien:cKCKJdzuBUarNx5L@cluster0.a4dtz.mongodb.net/pinquangdien?retryWrites=true&w=majority',function(err){
+mongoose.connect('mongodb+srv://pinquangdien:Yp8qsaISfHr0yssn@cluster0.a4dtz.mongodb.net/pinquangdien?retryWrites=true&w=majority',function(err){
     if (err){
         console.log('err: ',err);
     }else{
