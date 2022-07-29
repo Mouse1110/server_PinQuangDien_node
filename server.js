@@ -78,20 +78,18 @@ app.post('/data',function(req,res){
   if (dataFirst=== ''){
     dataFirst = data;
     if (parseFloat(dataFirst.cb)>=10){
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-          dataController.insert(data).then(function(log){
-            
-            if(!log){
-              res.json({err:1});
-              return;
-            }
-            res.json({err:0});
-          });
+      try{
+        transporter.sendMail(mailOptions)
+      } catch (e){
+        console.log(e)
+      }
+      
+      dataController.insert(data).then(function(log){
+        if(!log){
+          res.json({err:1});
+          return;
         }
+        res.json({err:0});
       });
     } else {
       dataController.insert(data).then(function(log){
